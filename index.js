@@ -7,21 +7,32 @@
  */
 function complexConvert(data) {
     // Створюємо новий порожній об'єкт для збереження результату.
+    let newObj = {};
     // Перетворюємо json дані в об'єкт та отримуємо всі ключі об'єкта.
+    let obj = JSON.parse(data);
+    let keys = Object.keys(obj);
     // Обходимо всі ключі та перевіряємо значення.
-    // Якщо значення є числом, збільшуємо його на 1.
-    // Якщо значення не є числом, просто копіюємо його у новий об'єкт без змін.
-    // Повертаємо оброблений об'єкт.
-    let obj = {};
-    const jsonData = JSON.stringify(data, (key, value) => {
-        console.log(key);
+    keys.forEach((key) => {
+        let value = obj[key];
+        // Якщо значення є числом, збільшуємо його на 1.
         if (typeof value === "number") {
-            return value + 1;
+            newObj[key] = value + 1;
+        } else {
+            // Якщо значення не є числом, просто копіюємо його у новий об'єкт без змін.
+            newObj[key] = value;
         }
-        return value;
     });
-
-    return JSON.parse(jsonData);
+    // Повертаємо оброблений об'єкт.
+    return JSON.stringify(newObj);
+    //let obj = {};
+    //const jsonData = JSON.stringify(data, (key, value) => {
+    //    console.log(key);
+    //    if (typeof value === "number") {
+    //        return value + 1;
+    //    }
+    //    return value;
+    //});
+    //return JSON.parse(jsonData);
 }
 
 console.log("Завдання: 1 ==============================");
@@ -107,7 +118,10 @@ function searchParamsURL(url) {
     const newUrl = new URL(url);
     let searchParams = newUrl.searchParams;
     const params = new Map();
-    searchParams.forEach((value, key) => params.set(key, value));
+    //searchParams.forEach((value, key) => params.set(key, value));
+    for (let param of searchParams) {
+        params.set(param[0], param[1]);
+    }
     return params;
 }
 
@@ -137,9 +151,15 @@ console.log(
  */
 function manipulateSearchParams(paramsObj, newUrl) {
     // Створюємо новий об'єкт URL з нової URL-адреси.
+    //let urlObj = new URL(newUrl);
     // Використовуючи метод 'keys' з об'єкта Object, отримуємо всі ключі paramsObj.
+    //let keys = Object.keys(paramsObj);
     // За допомогою циклу 'for of' перебираємо всі ключі та додаємо параметри пошуку до urlObj.
+    //for (let key of keys) {
+    //    urlObj.searchParams.set(key, paramsObj[key]);
+    //}
     // Повертаємо нову URL-адресу в рядковому форматі.
+    //return urlObj.href;
     let urlObj = new URL(newUrl);
     for (const key in paramsObj) {
         urlObj.searchParams.append(key, paramsObj[key]);
@@ -527,22 +547,31 @@ console.log(
  */
 function getURLValues(url) {
     // Створюємо новий об'єкт URL з вхідною URL-адресою.
-    // Отримуємо об'єкт `URLSearchParams` з пошуковими параметрами.
-    // Отримуємо масив ключів пошукових параметрів.
-    // Масив для збереження значень пошукових параметрів.
-    // Перебираємо ключі пошукових параметрів.
-    // Отримуємо всі значення для даного ключа за допомогою методу `getAll`.
-    // Додаємо значення до масиву.
-    // Повертаємо масив значень пошукових параметрів.
     let urlObj = new URL(url);
-    let serchParams = urlObj.searchParams.entries();
-    let keys = Array.from(urlObj.searchParams.keys());
-    let values = [];
-    for (const key of keys) {
-        values.push(urlObj.searchParams.getAll(key));
-    }
-
-    return values;
+    // Отримуємо об'єкт `URLSearchParams` з пошуковими параметрами.
+    let searchParams = urlObj.searchParams;
+    // Отримуємо масив ключів пошукових параметрів.
+    let keys = Array.from(searchParams.keys());
+    // Масив для збереження значень пошукових параметрів.
+    let valuesArray = [];
+    // Перебираємо ключі пошукових параметрів.
+    keys.forEach((key) => {
+        // Отримуємо всі значення для даного ключа за допомогою методу `getAll`.
+        let values = searchParams.getAll(key);
+        // Додаємо значення до масиву.
+        valuesArray.push(...values);
+    });
+    // Повертаємо масив значень пошукових параметрів.
+    return valuesArray;
+    //---мій варіант--------------------------------------------------------
+    //let urlObj = new URL(url);
+    //let serchParams = urlObj.searchParams.entries();
+    //let keys = Array.from(urlObj.searchParams.keys());
+    //let values = [];
+    //for (const key of keys) {
+    //    values.push(urlObj.searchParams.getAll(key));
+    //}
+    //return values;
 }
 
 // Приклад використання функції getURLValues
